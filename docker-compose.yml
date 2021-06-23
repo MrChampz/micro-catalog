@@ -13,7 +13,35 @@ services:
       - .:/home/node/app
     networks:
       - app-network
+      - rabbitmq_codeflix
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: micro-catalog-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./.docker/elasticdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - app-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.2
+    ports:
+      - 5601:5601
+    networks:
+      - app-network
 
 networks:
   app-network:
     driver: bridge
+  rabbitmq_codeflix:
+    external: true
