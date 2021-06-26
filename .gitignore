@@ -63,6 +63,8 @@ typings/
 # Cache used by TypeScript's incremental build
 *.tsbuildinfo
 
+.idea
+
 .npm-cache
 
 .docker/elasticdata

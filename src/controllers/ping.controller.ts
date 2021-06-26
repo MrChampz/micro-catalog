@@ -4,7 +4,7 @@ import {
   get, Request, response,
   ResponseObject, RestBindings
 } from '@loopback/rest';
-import {CategoryRepository} from '../repositories';
+import {CastMemberRepository, CategoryRepository, GenreRepository} from '../repositories';
 
 /**
  * OpenAPI response for ping()
@@ -39,18 +39,24 @@ const PING_RESPONSE: ResponseObject = {
 export class PingController {
   constructor(
     @inject(RestBindings.Http.REQUEST) private req: Request,
-    @repository(CategoryRepository) private categoryRepo: CategoryRepository
+    @repository(CategoryRepository) private categoryRepo: CategoryRepository,
+    @repository(GenreRepository) private genreRepo: GenreRepository,
+    @repository(CastMemberRepository) private castMemberRepo: CastMemberRepository
   ) { }
 
   @get('/categories')
-  async index() {
-    await this.categoryRepo.create({
-      id: Math.random().toString(),
-      name: 'categoria',
-      created_at: new Date(),
-      updated_at: new Date()
-    });
+  async categories() {
     return this.categoryRepo.find();
+  }
+
+  @get('/genres')
+  async genres() {
+    return this.genreRepo.find();
+  }
+
+  @get('/cast-members')
+  async castMembers() {
+    return this.castMemberRepo.find();
   }
 
   // Map to `GET /ping`

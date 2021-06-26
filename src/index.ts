@@ -1,6 +1,6 @@
+import './bootstrap';
 import {RestServer} from '@loopback/rest';
 import {ApplicationConfig, MicroCatalogApplication} from './application';
-import './bootstrap';
 
 export * from './application';
 
@@ -33,6 +33,19 @@ if (require.main === module) {
         // useful when used with OpenAPI-to-GraphQL to locate your application
         setServersFromRequest: true,
       },
+    },
+    rabbitmq: {
+      uri: process.env.RABBITMQ_URI,
+      exchanges: [
+        {
+          name: "teste1",
+          type: "direct"
+        },
+        {
+          name: "teste2",
+          type: "direct"
+        }
+      ]
     },
   };
   main(config).catch(err => {

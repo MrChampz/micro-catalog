@@ -1,4 +1,5 @@
 import {ApplicationConfig} from '@loopback/core';
+import {RestServer} from '@loopback/rest';
 import {MicroCatalogApplication} from './application';
 
 /**
@@ -11,10 +12,11 @@ async function exportOpenApiSpec(): Promise<void> {
       host: process.env.HOST ?? 'localhost',
     },
   };
-  // const outFile = process.argv[2] ?? '';
+  const outFile = process.argv[2] ?? '';
   const app = new MicroCatalogApplication(config);
-  await app.boot();
-  // await app.exportOpenApiSpec(outFile);
+  app.boot();
+  const restServer = new RestServer(app);
+  await restServer.exportOpenApiSpec(outFile);
 }
 
 exportOpenApiSpec().catch(err => {

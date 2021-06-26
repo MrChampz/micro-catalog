@@ -2,46 +2,52 @@ import datasource from './es7.datasource.config.json';
 
 export default {
   ...datasource,
-  "connector": "esv6",
-  "index": "catalog",
-  "version": 7,
-  "debug": process.env.APP_ENV === 'dev',
-  // "defaultSize": "",
-  "configuration": {
-    "node": process.env.ELASTIC_SEARCH_HOST,
-    "requestTimeout": process.env.ELASTIC_SEARCH_REQUEST_TIMEOUT,
-    "pingTimeout": process.env.ELASTIC_SEARCH_PING_TIMEOUT,
+  connector: 'esv6',
+  index: 'catalog',
+  version: 7,
+  debug: process.env.APP_ENV === 'dev',
+  defaultSize: 50,
+  configuration: {
+    node: process.env.ELASTIC_SEARCH_HOST,
+    requestTimeout: process.env.ELASTIC_SEARCH_REQUEST_TIMEOUT,
+    pingTimeout: process.env.ELASTIC_SEARCH_PING_TIMEOUT,
   },
-  "mappingProperties": {
-    "docType": {
-      "type": "keyword",
+  mappingProperties: {
+    docType: {
+      type: 'keyword',
     },
-    "id": {
-      "type": "keyword",
-      "fields": {
-        "keyword": {
-          "type": "keyword",
-          "ignore_above": 256
+    id: {
+      type: 'keyword',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          ignore_above: 256
         }
       }
     },
-    "name": {
-      "type": "text",
-      "fields": {
-        "keyword": {
-          "type": "keyword",
-          "ignore_above": 256
+    name: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          ignore_above: 256
         }
       }
     },
-    "is_active": {
-      "type": "boolean",
+    description: {
+      type: 'text',
     },
-    "created_at": {
-      "type": "date",
+    type: {
+      type: 'short',
     },
-    "updated_at": {
-      "type": "date",
+    is_active: {
+      type: 'boolean',
+    },
+    created_at: {
+      type: 'date',
+    },
+    updated_at: {
+      type: 'date',
     }
   }
 }
