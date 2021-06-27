@@ -3,31 +3,28 @@ import {rabbitmqSubscribe} from "../decorators";
 import {RabbitMQPayload} from "../servers";
 import { repository } from '@loopback/repository';
 import { CastMemberRepository } from '../repositories';
+import {BaseModelSyncService} from "./base-model-sync.service";
 
-@bind({scope: BindingScope.TRANSIENT})
-export class CastMemberSyncService {
+@bind({scope: BindingScope.SINGLETON})
+export class CastMemberSyncService extends BaseModelSyncService {
+
   constructor(
     @repository(CastMemberRepository)
     private repository: CastMemberRepository
-  ) {}
+  ) {
+    super();
+  }
 
   @rabbitmqSubscribe({
     exchange: 'amq.topic',
-    queue: 'cast-members',
-    routingKey: 'model.castMember.*'
+    queue: 'micro-catalog/sync-videos/cast-member',
+    routingKey: 'model.cast-member.*'
   })
   async handler({data, message}: RabbitMQPayload) {
-    const [event] = message.fields.routingKey.split('.').slice(2);
-    switch (event) {
-      case 'created':
-        await this.repository.create(data);
-        break;
-      case 'updated':
-        await this.repository.updateById(data.id, data);
-        break;
-      case 'deleted':
-        await this.repository.deleteById(data.id);
-        break;
-    }
+    await this.sync({
+      repo: this.repository,
+      data,
+      message
+    });
   }
 }

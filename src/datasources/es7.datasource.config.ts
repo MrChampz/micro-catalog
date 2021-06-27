@@ -38,7 +38,7 @@ export default {
       type: 'text',
     },
     type: {
-      type: 'short',
+      type: 'byte',
     },
     is_active: {
       type: 'boolean',

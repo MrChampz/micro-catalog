@@ -3,7 +3,7 @@ import {repository} from '@loopback/repository';
 import {CategoryRepository} from '../repositories';
 import {RabbitMQBindings} from "../keys";
 import {AmqpConnectionManager, AmqpConnectionManagerOptions, ChannelWrapper, connect} from "amqp-connection-manager";
-import {ConfirmChannel, ConsumeMessage, Options} from "amqplib";
+import {Channel, ConfirmChannel, Message, Options} from "amqplib";
 import {RABBITMQ_SUBSCRIBE_DECORATOR, RabbitMQSubscribeMetadata} from "../decorators";
 
 interface RabbitMQExchange {
@@ -16,12 +16,19 @@ export interface RabbitMQConfig {
   uri: string;
   connOptions?: AmqpConnectionManagerOptions
   exchanges?: RabbitMQExchange[];
+  defaultHandlerError?: ResponseEnum;
 }
 
 export interface RabbitMQPayload {
   data: any;
-  message: ConsumeMessage;
+  message: Message;
   channel: ConfirmChannel;
+}
+
+export enum ResponseEnum {
+  ACK,
+  REQUEUE,
+  NACK
 }
 
 export class RabbitMQServer extends Context implements Server {
@@ -143,15 +150,33 @@ export class RabbitMQServer extends Context implements Server {
             data = null;
           }
           console.log(data);
+
           const payload: RabbitMQPayload = {data, message, channel};
-          await method(payload);
-          channel.ack(message);
+          const responseType = await method(payload);
+          this.dispatchResponse(channel, message, responseType);
         }
       } catch (error) {
         console.error(error);
-
+        if (!message) {
+          return;
+        }
+        this.dispatchResponse(channel, message, this.config.defaultHandlerError);
       }
     });
+  }
+
+  private dispatchResponse(channel: Channel, message: Message, responseType?: ResponseEnum) {
+    switch (responseType) {
+      case ResponseEnum.REQUEUE:
+        channel.nack(message, false, true);
+        break;
+      case ResponseEnum.NACK:
+        channel.nack(message, false, false);
+        break;
+      case ResponseEnum.ACK:
+      default:
+        channel.ack(message);
+    }
   }
 
   get listening(): boolean {
