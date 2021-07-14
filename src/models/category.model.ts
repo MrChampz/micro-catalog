@@ -1,5 +1,11 @@
 import {Entity, model, property} from '@loopback/repository';
 
+export interface CategoryRelationship {
+  id: string;
+  name: string;
+  is_active: boolean;
+}
+
 @model()
 export class Category extends Entity {
 
@@ -14,13 +20,20 @@ export class Category extends Entity {
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      minLength: 1,
+      maxLength: 255,
+    },
   })
   name: string;
 
   @property({
     type: 'string',
     required: false,
-    default: ''
+    default: null,
+    jsonSchema: {
+      nullable: true,
+    },
   })
   description: string;
 

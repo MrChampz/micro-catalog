@@ -1,24 +1,31 @@
-import {bind, BindingScope} from '@loopback/core';
+import {bind, BindingScope, service} from '@loopback/core';
 import {rabbitmqSubscribe} from "../decorators";
 import {RabbitMQPayload} from "../servers";
 import { repository } from '@loopback/repository';
 import { CastMemberRepository } from '../repositories';
 import {BaseModelSyncService} from "./base-model-sync.service";
+import {ValidatorService} from "./validator.service";
 
 @bind({scope: BindingScope.SINGLETON})
 export class CastMemberSyncService extends BaseModelSyncService {
 
   constructor(
     @repository(CastMemberRepository)
-    private repository: CastMemberRepository
+    private repository: CastMemberRepository,
+
+    @service(ValidatorService)
+    private validator: ValidatorService,
   ) {
-    super();
+    super(validator);
   }
 
   @rabbitmqSubscribe({
     exchange: 'amq.topic',
-    queue: 'micro-catalog/sync-videos/cast-member',
-    routingKey: 'model.cast-member.*'
+    queue: 'micro-catalog/sync-videos/cast_member',
+    routingKey: 'model.cast_member.*',
+    queueOptions: {
+      deadLetterExchange: "dlx.amq.topic"
+    }
   })
   async handler({data, message}: RabbitMQPayload) {
     await this.sync({

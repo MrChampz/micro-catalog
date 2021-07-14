@@ -1,28 +1,22 @@
-import {
-  Client, createRestAppClient,
-  givenHttpServerConfig
-} from '@loopback/testlab';
+import {Client, givenHttpServerConfig} from '@loopback/testlab';
+import supertest from 'supertest';
 import {MicroCatalogApplication} from '../..';
+import config from '../../config';
 
 export async function setupApplication(): Promise<AppWithClient> {
   const restConfig = givenHttpServerConfig({
-    // Customize the server configuration here.
-    // Empty values (undefined, '') will be ignored by the helper.
-    //
-    // host: process.env.HOST,
-    // port: +process.env.PORT,
+    port: 9000
   });
 
   const app = new MicroCatalogApplication({
+    ...config,
     rest: restConfig,
   });
 
   await app.boot();
   await app.start();
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const client = createRestAppClient(app);
+  const client = supertest("http://127.0.0.1:9000");
 
   return {app, client};
 }

@@ -1,9 +1,9 @@
-import {DefaultCrudRepository} from '@loopback/repository';
 import {CastMember, CastMemberRelations} from '../models';
 import {Es7DataSource} from '../datasources';
 import {inject} from '@loopback/core';
+import {BaseRepository} from "./base.repository";
 
-export class CastMemberRepository extends DefaultCrudRepository<
+export class CastMemberRepository extends BaseRepository<
   CastMember,
   typeof CastMember.prototype.id,
   CastMemberRelations
