@@ -15,25 +15,25 @@ export default {
   },
   rabbitmq: {
     uri: process.env.RABBITMQ_URI,
-    defaultHandlerError: parseInt(process.env.RABBITMQ_HANDLER_ERROR || '0'),
+    defaultHandlerError: parseInt(process.env.RABBITMQ_HANDLER_ERROR ?? '0'),
     exchanges: [
       {
-        name: "dlx.amq.topic",
-        type: "topic"
-      }
+        name: 'dlx.amq.topic',
+        type: 'topic',
+      },
     ],
     queues: [
       {
-        name: "dlx.sync-videos",
+        name: 'dlx.sync-videos',
         exchange: {
-          name: "dlx.amq.topic",
-          routingKey: "model.*.*"
+          name: 'dlx.amq.topic',
+          routingKey: 'model.*.*',
         },
         options: {
           deadLetterExchange: 'amq.topic',
-          messageTtl: 20000
-        }
-      }
-    ]
+          messageTtl: 20000,
+        },
+      },
+    ],
   },
 };

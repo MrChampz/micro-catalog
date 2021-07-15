@@ -1,11 +1,18 @@
-import {DefaultCrudRepository, Entity, Filter, Options} from '@loopback/repository';
+import {
+  DefaultCrudRepository,
+  Entity,
+  Filter,
+  Options,
+} from '@loopback/repository';
 import {Client} from 'es7';
-import { pick } from 'lodash';
-import {PaginatorSerializer} from "../utils/paginator-serializer";
+import {pick} from 'lodash';
+import {PaginatorSerializer} from '../utils/paginator-serializer';
 
-export class BaseRepository<T extends Entity, ID, Relations extends object = {}>
-  extends DefaultCrudRepository<T, ID, Relations> {
-
+export class BaseRepository<
+  T extends Entity,
+  ID,
+  Relations extends object = {},
+> extends DefaultCrudRepository<T, ID, Relations> {
   async paginate(filter?: Filter<T>, options?: Options) {
     const count = (await this.count(filter?.where)).count;
     const results = await this.find(filter, options);
@@ -23,8 +30,8 @@ export class BaseRepository<T extends Entity, ID, Relations extends object = {}>
       body: {
         query: {
           term: {
-            _id: id
-          }
+            _id: id,
+          },
         },
         script: {
           source: `
@@ -39,10 +46,10 @@ export class BaseRepository<T extends Entity, ID, Relations extends object = {}>
             }
           `,
           params: {
-            [relationName]: data
-          }
-        }
-      }
+            [relationName]: data,
+          },
+        },
+      },
     };
 
     const db: Client = this.dataSource.connector?.db;
@@ -56,8 +63,8 @@ export class BaseRepository<T extends Entity, ID, Relations extends object = {}>
       body: {
         query: {
           term: {
-            _id: id
-          }
+            _id: id,
+          },
         },
         script: {
           source: `
@@ -68,19 +75,23 @@ export class BaseRepository<T extends Entity, ID, Relations extends object = {}>
             }
           `,
           params: {
-            [relationName]: data
-          }
-        }
-      }
+            [relationName]: data,
+          },
+        },
+      },
     };
 
     const db: Client = this.dataSource.connector?.db;
     await db.update_by_query(document);
   }
 
-  async updateRelation(relationName: string, data: { id: any, [key: string]: any }) {
+  async updateRelation(
+    relationName: string,
+    data: {id: any; [key: string]: any},
+  ) {
     const fields = Object.keys(
-      this.modelClass.definition.properties[relationName].jsonSchema.items.properties
+      this.modelClass.definition.properties[relationName].jsonSchema.items
+        .properties,
     );
 
     const relation = pick(data, fields);
@@ -97,10 +108,10 @@ export class BaseRepository<T extends Entity, ID, Relations extends object = {}>
                   path: relationName,
                   query: {
                     exists: {
-                      field: relationName
-                    }
-                  }
-                }
+                      field: relationName,
+                    },
+                  },
+                },
               },
               {
                 nested: {
@@ -108,12 +119,12 @@ export class BaseRepository<T extends Entity, ID, Relations extends object = {}>
                   query: {
                     term: {
                       [`${relationName}.id`]: relation.id,
-                    }
-                  }
-                }
-              }
-            ]
-          }
+                    },
+                  },
+                },
+              },
+            ],
+          },
         },
         script: {
           source: `
@@ -121,10 +132,10 @@ export class BaseRepository<T extends Entity, ID, Relations extends object = {}>
             ctx._source['${relationName}'].add(params['relation']);
           `,
           params: {
-            relation
-          }
-        }
-      }
+            relation,
+          },
+        },
+      },
     };
 
     const db: Client = this.dataSource.connector?.db;

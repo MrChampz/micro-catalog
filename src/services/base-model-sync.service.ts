@@ -1,8 +1,8 @@
-import {DefaultCrudRepository, EntityNotFoundError} from "@loopback/repository";
-import {Message} from "amqplib";
-import {pick} from "lodash";
-import {ValidatorService} from "./validator.service";
-import {BaseRepository} from "../repositories/base.repository";
+import {DefaultCrudRepository, EntityNotFoundError} from '@loopback/repository';
+import {Message} from 'amqplib';
+import {pick} from 'lodash';
+import {ValidatorService} from './validator.service';
+import {BaseRepository} from '../repositories/base.repository';
 
 export interface SyncOptions {
   repo: DefaultCrudRepository<any, any>;
@@ -20,7 +20,6 @@ export interface SyncRelationOptions {
 }
 
 export abstract class BaseModelSyncService {
-
   protected constructor(private validatorService: ValidatorService) {}
 
   protected async sync({repo, data, message}: SyncOptions) {
@@ -52,12 +51,16 @@ export abstract class BaseModelSyncService {
     return pick(data, Object.keys(repo.entityClass.definition.properties));
   }
 
-  protected async updateOrCreate(repo: DefaultCrudRepository<any, any>, id: string, entity: any) {
+  protected async updateOrCreate(
+    repo: DefaultCrudRepository<any, any>,
+    id: string,
+    entity: any,
+  ) {
     const exists = await repo.exists(id);
     await this.validatorService.validate({
       data: entity,
       entityClass: repo.entityClass,
-      ...(exists && {options: {partial: true}})
+      ...(exists && {options: {partial: true}}),
     });
     return exists ? repo.updateById(id, entity) : repo.create(entity);
   }
@@ -68,14 +71,21 @@ export abstract class BaseModelSyncService {
     relationName,
     relationIds,
     relationRepo,
-    message
+    message,
   }: SyncRelationOptions) {
     const relationFields = this.extractRelationFields(repo, relationName);
-    const entitiesFound = await this.findRelatedEntities(relationRepo, relationIds, relationFields);
+    const entitiesFound = await this.findRelatedEntities(
+      relationRepo,
+      relationIds,
+      relationFields,
+    );
 
     if (!entitiesFound.length) {
-      const error = new EntityNotFoundError(relationRepo.entityClass, relationIds);
-      error.name = "EntityNotFound";
+      const error = new EntityNotFoundError(
+        relationRepo.entityClass,
+        relationIds,
+      );
+      error.name = 'EntityNotFound';
       throw error;
     }
 
@@ -90,10 +100,13 @@ export abstract class BaseModelSyncService {
     }
   }
 
-  protected extractRelationFields(repo: DefaultCrudRepository<any, any>, relationName: string) {
+  protected extractRelationFields(
+    repo: DefaultCrudRepository<any, any>,
+    relationName: string,
+  ) {
     return Object.keys(
-      repo.modelClass.definition.properties[relationName]
-        .jsonSchema.items.properties
+      repo.modelClass.definition.properties[relationName].jsonSchema.items
+        .properties,
     ).reduce((obj: any, field: string) => {
       obj[field] = true;
       return obj;
@@ -103,11 +116,11 @@ export abstract class BaseModelSyncService {
   protected findRelatedEntities(
     relationRepo: DefaultCrudRepository<any, any>,
     relationIds: string[],
-    relationFields: any
+    relationFields: any,
   ) {
     return relationRepo.find({
       where: {
-        or: relationIds.map(id => ({id}))
+        or: relationIds.map(id => ({id})),
       },
       fields: relationFields,
     });

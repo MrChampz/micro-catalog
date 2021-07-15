@@ -1,5 +1,5 @@
-import {CoreBindings} from "@loopback/core";
-import {RabbitMQConfig} from "./servers";
+import {CoreBindings} from '@loopback/core';
+import {RabbitMQConfig} from './servers';
 
 export namespace RabbitMQBindings {
   export const CONFIG =

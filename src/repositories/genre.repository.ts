@@ -1,7 +1,7 @@
 import {Genre, GenreRelations} from '../models';
 import {Es7DataSource} from '../datasources';
 import {inject} from '@loopback/core';
-import {BaseRepository} from "./base.repository";
+import {BaseRepository} from './base.repository';
 
 export class GenreRepository extends BaseRepository<
   Genre,

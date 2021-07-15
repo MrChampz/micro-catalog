@@ -2,46 +2,42 @@ version: '3'
 services:
 
   app:
-    build: .
-    entrypoint: ./.docker/entrypoint.sh
-    container_name: micro-catalog-app
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: app
     ports:
       - 3001:3000
     environment:
       - HOST=0.0.0.0
-    volumes:
-      - .:/home/node/app
+      - PORT=3000
+    depends_on:
+      - elasticsearch
     networks:
       - app-network
-      - micro-rabbitmq_codeflix
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
-    container_name: micro-catalog-elasticsearch
+    container_name: elasticsearch
     environment:
       - discovery.type=single-node
+      - xpack.security.enabled=false
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - ./.docker/elasticdata:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
     networks:
       - app-network
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.13.2
-    ports:
-      - 5601:5601
+  dockerize:
+    image: jwilder/dockerize
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
-  micro-rabbitmq_codeflix:
-    external: true

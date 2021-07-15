@@ -8,7 +8,6 @@ export interface CategoryRelationship {
 
 @model()
 export class Category extends Entity {
-
   @property({
     type: 'string',
     id: true,
@@ -40,19 +39,19 @@ export class Category extends Entity {
   @property({
     type: 'boolean',
     required: false,
-    default: true
+    default: true,
   })
   is_active?: boolean;
 
   @property({
     type: 'date',
-    required: true
+    required: true,
   })
   created_at: string;
 
   @property({
     type: 'date',
-    require: true
+    require: true,
   })
   updated_at: string;
 

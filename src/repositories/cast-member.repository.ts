@@ -1,7 +1,7 @@
 import {CastMember, CastMemberRelations} from '../models';
 import {Es7DataSource} from '../datasources';
 import {inject} from '@loopback/core';
-import {BaseRepository} from "./base.repository";
+import {BaseRepository} from './base.repository';
 
 export class CastMemberRepository extends BaseRepository<
   CastMember,

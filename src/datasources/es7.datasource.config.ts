@@ -43,7 +43,7 @@ export default {
       type: 'keyword',
     },
     id: {
-      type: 'keyword'
+      type: 'keyword',
     },
     name: {
       type: 'text',
@@ -52,9 +52,9 @@ export default {
       fields: {
         keyword: {
           type: 'keyword',
-          ignore_above: 256
-        }
-      }
+          ignore_above: 256,
+        },
+      },
     },
     description: {
       type: 'text',
@@ -84,14 +84,14 @@ export default {
           fields: {
             keyword: {
               type: 'keyword',
-              ignore_above: 256
-            }
-          }
+              ignore_above: 256,
+            },
+          },
         },
         is_active: {
           type: 'boolean',
         },
       },
     },
-  }
-}
+  },
+};

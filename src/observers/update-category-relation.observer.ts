@@ -1,16 +1,15 @@
 import {lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
-import {repository} from "@loopback/repository";
-import {CategoryRepository, GenreRepository} from "../repositories";
+import {repository} from '@loopback/repository';
+import {CategoryRepository, GenreRepository} from '../repositories';
 
 @lifeCycleObserver('')
 export class UpdateCategoryRelationObserver implements LifeCycleObserver {
-
   constructor(
     @repository(CategoryRepository)
     private categoryRepo: CategoryRepository,
 
     @repository(GenreRepository)
-    private genreRepo: GenreRepository
+    private genreRepo: GenreRepository,
   ) {}
 
   async start(): Promise<void> {
@@ -21,7 +20,8 @@ export class UpdateCategoryRelationObserver implements LifeCycleObserver {
           return;
         }
         await this.genreRepo.updateRelation('categories', data);
-      });
+      },
+    );
   }
 
   async stop(): Promise<void> {}
