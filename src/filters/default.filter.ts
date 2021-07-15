@@ -1,11 +1,18 @@
-import {AnyObject, Filter, FilterBuilder, JsonSchema, Model, Where, WhereBuilder} from "@loopback/repository";
-import { clone } from "lodash";
-import {builtinParsers, getJsonSchema} from "@loopback/rest";
-import json = builtinParsers.json;
+import {
+  AnyObject,
+  Filter,
+  FilterBuilder,
+  JsonSchema,
+  Model,
+  Where,
+  WhereBuilder,
+} from '@loopback/repository';
+import {clone} from 'lodash';
+import {getJsonSchema} from '@loopback/rest';
 
-export abstract class DefaultFilter<T extends object = AnyObject>
-  extends FilterBuilder<T> {
-
+export abstract class DefaultFilter<
+  T extends object = AnyObject,
+> extends FilterBuilder<T> {
   defaultWhere: Where<T> | null | undefined;
 
   constructor(f?: Filter<T>) {
@@ -16,7 +23,9 @@ export abstract class DefaultFilter<T extends object = AnyObject>
   }
 
   isActive(modelCtor: typeof Model) {
-    this.filter.where = new WhereBuilder<{is_active: boolean}>(this.filter.where)
+    this.filter.where = new WhereBuilder<{is_active: boolean}>(
+      this.filter.where,
+    )
       .eq('is_active', true)
       .build() as Where<T>;
     this.isActiveRelations(modelCtor);
@@ -34,12 +43,15 @@ export abstract class DefaultFilter<T extends object = AnyObject>
     const relationsFiltered = relations.filter(relation => {
       const jsonSchema = schema.properties?.[relation] as JsonSchema;
 
-      if (!jsonSchema ||
-         (jsonSchema.type !== "array" && jsonSchema.type !== "object")) {
+      if (
+        !jsonSchema ||
+        (jsonSchema.type !== 'array' && jsonSchema.type !== 'object')
+      ) {
         return false;
       }
 
-      const properties = (jsonSchema.items as any).properties || jsonSchema.properties;
+      const properties =
+        (jsonSchema.items as any).properties || jsonSchema.properties;
 
       return Object.keys(properties).includes('is_active');
     });
@@ -48,9 +60,9 @@ export abstract class DefaultFilter<T extends object = AnyObject>
 
     const regex = new RegExp(
       `(${relationsFiltered.map(r => `${r}.*`).join('|')})`,
-      'g'
+      'g',
     );
-    
+
     const matches = whereStr.match(regex);
     if (!matches) {
       return this;
@@ -61,7 +73,9 @@ export abstract class DefaultFilter<T extends object = AnyObject>
       return {[`${relation}.is_active`]: true};
     });
 
-    this.filter.where = new WhereBuilder<{is_active: boolean}>(this.filter.where)
+    this.filter.where = new WhereBuilder<{is_active: boolean}>(
+      this.filter.where,
+    )
       .and(fields)
       .build() as Where<T>;
     return this;

@@ -1,13 +1,12 @@
-import {inject, Provider, ValueOrPromise} from "@loopback/core";
-import {OperationRetval, Response, RequestContext, Send} from "@loopback/rest";
-import {PaginatorSerializer} from "../utils/paginator-serializer";
-import {classToPlain} from "class-transformer";
+import {inject, Provider, ValueOrPromise} from '@loopback/core';
+import {OperationRetval, Response, RequestContext, Send} from '@loopback/rest';
+import {PaginatorSerializer} from '../utils/paginator-serializer';
+import {classToPlain} from 'class-transformer';
 
 export class ApiResourceProvider implements Provider<Send> {
-
   constructor(
     @inject.context()
-    public request: RequestContext
+    public request: RequestContext,
   ) {}
 
   value(): ValueOrPromise<Send> {
@@ -16,7 +15,7 @@ export class ApiResourceProvider implements Provider<Send> {
         response.json(
           result instanceof PaginatorSerializer
             ? result.toJson(this.request)
-            : classToPlain(result)
+            : classToPlain(result),
         );
       }
       response.end();

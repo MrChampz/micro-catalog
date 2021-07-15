@@ -5,10 +5,14 @@ import {RestBindings, RestComponent, RestServer} from '@loopback/rest';
 import {RestExplorerBindings} from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {EntityComponent, RestExplorerComponent, ValidatorsComponent} from './components';
+import {
+  EntityComponent,
+  RestExplorerComponent,
+  ValidatorsComponent,
+} from './components';
 import {MySequence} from './sequence';
 import {RabbitMQServer} from './servers';
-import {ApiResourceProvider} from "./providers/api-resource.provider";
+import {ApiResourceProvider} from './providers/api-resource.provider';
 
 export {ApplicationConfig};
 
@@ -34,8 +38,9 @@ export class MicroCatalogApplication extends BootMixin(
     this.component(ValidatorsComponent);
     this.component(EntityComponent);
 
-    this.bind(RestBindings.SequenceActions.SEND)
-        .toProvider(ApiResourceProvider);
+    this.bind(RestBindings.SequenceActions.SEND).toProvider(
+      ApiResourceProvider,
+    );
 
     this.projectRoot = __dirname;
     this.bootOptions = {

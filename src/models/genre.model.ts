@@ -1,9 +1,8 @@
 import {Entity, model, property} from '@loopback/repository';
-import {CategoryRelationship} from "./category.model";
+import {CategoryRelationship} from './category.model';
 
 @model()
 export class Genre extends Entity {
-
   @property({
     type: 'string',
     id: true,

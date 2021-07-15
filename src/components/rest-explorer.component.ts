@@ -3,10 +3,17 @@ import {
   config,
   ContextTags,
   inject,
-  injectable
+  injectable,
 } from '@loopback/core';
-import {createControllerFactoryForClass, RestBindings, RestServer} from '@loopback/rest';
-import {RestExplorerBindings, RestExplorerConfig} from '@loopback/rest-explorer';
+import {
+  createControllerFactoryForClass,
+  RestBindings,
+  RestServer,
+} from '@loopback/rest';
+import {
+  RestExplorerBindings,
+  RestExplorerConfig,
+} from '@loopback/rest-explorer';
 import {ExplorerController} from '@loopback/rest-explorer/dist/rest-explorer.controller';
 
 const swaggerUI = require('swagger-ui-dist');

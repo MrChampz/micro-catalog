@@ -8,24 +8,26 @@ if (!command) {
   showAvailableCommands();
 }
 
-const commandKey = Object.keys(commands).find(c => commands[c].command === command);
+const commandKey = Object.keys(commands).find(
+  c => commands[c].command === command,
+);
 if (!commandKey) {
   showAvailableCommands();
 }
 
-const commandInstance = new commands[commandKey];
-commandInstance
-  .run()
-  .catch(console.error);
+const commandInstance = new commands[commandKey]();
+commandInstance.run().catch(console.error);
 
 function showAvailableCommands() {
-  console.log(chalk.magenta("Loopback Console"));
-  console.log("");
-  console.log(chalk.green("Available Commands"));
-  console.log("");
+  console.log(chalk.magenta('Loopback Console'));
+  console.log('');
+  console.log(chalk.green('Available Commands'));
+  console.log('');
   for (const c of Object.keys(commands)) {
-    console.log(`- ${chalk.blue(commands[c].command)} - ${commands[c].description}`);
+    console.log(
+      `- ${chalk.blue(commands[c].command)} - ${commands[c].description}`,
+    );
   }
-  console.log("");
+  console.log('');
   process.exit();
 }

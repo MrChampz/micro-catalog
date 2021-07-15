@@ -1,5 +1,5 @@
-import {RequestContext} from "@loopback/rest";
-import {stringify} from "qs";
+import {RequestContext} from '@loopback/rest';
+import {stringify} from 'qs';
 import {classToPlain, Exclude, Expose} from 'class-transformer';
 
 export class PaginatorSerializer<T = any> {
@@ -10,7 +10,7 @@ export class PaginatorSerializer<T = any> {
     public results: T[],
     public count: number,
     public limit: number,
-    public offset: number
+    public offset: number,
   ) {}
 
   @Expose()
@@ -21,9 +21,9 @@ export class PaginatorSerializer<T = any> {
         filter: {
           limit: this.limit,
           ...(this.offset - this.limit >= 0 && {
-            offset: this.offset - this.limit
-          })
-        }
+            offset: this.offset - this.limit,
+          }),
+        },
       })}`;
     }
     return previous;
@@ -36,10 +36,11 @@ export class PaginatorSerializer<T = any> {
       next = `${this.baseUrl}?${stringify({
         filter: {
           limit: this.limit,
-          ...(this.offset >= 0 && this.limit >= 0 && {
-            offset: this.offset + this.limit
-          })
-        }
+          ...(this.offset >= 0 &&
+            this.limit >= 0 && {
+              offset: this.offset + this.limit,
+            }),
+        },
       })}`;
     }
     return next;

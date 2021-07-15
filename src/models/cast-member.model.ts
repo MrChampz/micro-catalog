@@ -7,7 +7,6 @@ export enum CastMemberType {
 
 @model()
 export class CastMember extends Entity {
-
   @property({
     type: 'string',
     id: true,
