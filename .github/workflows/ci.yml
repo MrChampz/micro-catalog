@@ -22,7 +22,7 @@ jobs:
       - name: Waiting for containers
         run: >-
           docker-compose -f docker-compose.prod.yml run dockerize dockerize
-          -wait http://elasticsearch:9200/ -wait http://app:3000/ -timeout 480s
+          -wait http://elasticsearch:9200/ -wait http://app:3001/ -timeout 480s
 
       - name: Run tests
         run: docker exec -t app npm test
