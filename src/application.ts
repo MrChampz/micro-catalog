@@ -9,6 +9,11 @@ import {EntityComponent, RestExplorerComponent, ValidatorsComponent} from './com
 import {MySequence} from './sequence';
 import {RabbitMQServer} from './servers';
 import {ApiResourceProvider} from "./providers/api-resource.provider";
+import {AuthenticationComponent} from "@loopback/authentication";
+import {JWTAuthenticationComponent, TokenServiceBindings} from "@loopback/authentication-jwt";
+import {JWTService} from "./services/auth/jwt.service";
+import {AuthorizationComponent, AuthorizationDecision, AuthorizationTags} from "@loopback/authorization";
+import {SubscriberAuthorizationProvider} from "./providers/subscriber-authorization.provider";
 
 export {ApplicationConfig};
 
@@ -33,6 +38,20 @@ export class MicroCatalogApplication extends BootMixin(
 
     this.component(ValidatorsComponent);
     this.component(EntityComponent);
+
+    this.component(AuthenticationComponent);
+    this.component(JWTAuthenticationComponent);
+    this.bind(TokenServiceBindings.TOKEN_SERVICE)
+      .toClass(JWTService);
+
+    const bindings = this.component(AuthorizationComponent);
+    this.configure(bindings.key).to({
+      precedence: AuthorizationDecision.DENY,
+      defaultDecision: AuthorizationDecision.DENY
+    });
+    this.bind('authorizationProviders.subscriber-provider')
+        .toProvider(SubscriberAuthorizationProvider)
+        .tag(AuthorizationTags.AUTHORIZER);
 
     this.bind(RestBindings.SequenceActions.SEND)
         .toProvider(ApiResourceProvider);
